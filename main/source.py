@@ -267,5 +267,6 @@ if __name__ == '__main__':
         getHomeVal.place(x=300,y=125)
         sendEmail.place(x=500,y=125)
         threading.Thread(target=runFunc(isRunning,currData))
+        #save old data when program finishes
         with open('oldData.txt', 'wb')as fp:
             pickle.dump(currData, fp)
