@@ -64,15 +64,15 @@ class homeVal(multiprocessing.Process):
     def parseData(self):
         #Open browser
         self.driver = webdriver.Chrome()
-        self.driver.get("https://www.uwm.com/dashboard")
+        #self.driver.get(#Put url here and uncomment line)
         
         
         self.driver.find_element(By.ID, "warning-login-btn").click()
         user = self.driver.find_element(By.ID, "userNameInput")
         password = self.driver.find_element(By.ID,"passwordInput")
         #Login
-        user.send_keys("randy.reed@comcast.net")
-        password.send_keys("JohnElway07!$!")
+        #user.send_keys("#Put user name here and uncomment")
+        #password.send_keys("#Put Password here and uncomment")
 
         self.driver.find_element(By.ID,"submitButton").click()
         sleep(10)
@@ -83,7 +83,7 @@ class homeVal(multiprocessing.Process):
         for i in range(5):
             
             start = time.process_time()
-            self.driver.get("https://www.uwm.com/dashboard")
+            #self.driver.get("#Put same url here as used in line 67")
             sleep(1)
             address = WebDriverWait(self.driver, 20).until(EC.visibility_of_element_located((By.ID, "street-address")))
             city = WebDriverWait(self.driver, 20).until(EC.visibility_of_element_located((By.ID, "city")))
@@ -110,9 +110,12 @@ class homeVal(multiprocessing.Process):
             print(link)
             print(value)
             
+            #Update array[index] if values were found 
             self.data[i].append(link)
             self.data[i].append(value)
+            #Add to new array
             newData.append(self.data[i])
+            #Calculated avg time remaining
             end = time.process_time()
             avg += end-start
             avg /= 2
@@ -135,12 +138,12 @@ class homeVal(multiprocessing.Process):
 
     def email(self):
         port = 465
-        password = "tlaq rzbn qpgz sxku"#input("Enter Password:")
-        recip = ["harrisonreed89@gmail.com", "rreedulc@gmail.com"]
+        password = input("Enter Password:")
+        #recip = ["#Put recipients here"]#Note used for testing
         context = ssl.create_default_context()
         
         with smtplib.SMTP_SSL("smtp.gmail.com", port, context=context) as server:
-            server.login("harrisonreed89@gmail.com", password)
+            #server.login("Put email to send out to recipients", password)
             
             for i in range(5):
                 if(len(self.data[i]) != 9):
@@ -148,8 +151,8 @@ class homeVal(multiprocessing.Process):
                     continue
                 msg = MIMEMultipart()
                 msg['Subject'] = "Your Home's Valuation: Unlocking Insights for Your Future! "
-                msg['From'] = "harrisonreed89@gmail.com"
-                msg['to'] = "harrisonreed89@gmail.com"
+                msg['From'] = #put email to send out to recipients here
+                msg['to'] = self.data[i][6]
                 message = """<p>Will be sent to""" + self.data[i][6] + """<br>Dear """ + str(self.data[i][0]) +""",<br><br> 
 
     I hope this message finds you well and in the holiday spirits!<br><br>  
@@ -181,7 +184,7 @@ class homeVal(multiprocessing.Process):
                 msg.attach(footer)
                 
                 #msg.attach(image)
-                server.sendmail("harrisonreed89@gmail.com", "harrisonreed89@gmail.com", msg.as_string())
+                server.sendmail("Your email", self.data[i][6], msg.as_string())
                 print("Message sent to " + self.data[i][6])
         pass
 
