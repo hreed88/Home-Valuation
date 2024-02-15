@@ -33,7 +33,7 @@ class homeVal(multiprocessing.Process):
         self.driver = None
         self.dataRetrived = False #multiprocessing.Value('b', False)
         pass
-
+    #Description: Gets the data from an excel spreadsheet, and converts it to 2d array 
     def getData(self, bookName):
         data = openpyxl.load_workbook(bookName)
         data1 = data.active
@@ -61,6 +61,7 @@ class homeVal(multiprocessing.Process):
         self.dataRetrived= True#.value=True
         pass
 
+    #Description: Goes to website and enters data based on the size of the list to retrieve to values
     def parseData(self):
         #Open browser
         self.driver = webdriver.Chrome()
@@ -80,11 +81,13 @@ class homeVal(multiprocessing.Process):
         newData = []
         print("operating")
         avg = 1
-        for i in range(5):
+        #Get all values for items in data, then update data to contain these new values
+        for i in range(len(self.data):
             
             start = time.process_time()
             #self.driver.get("#Put same url here as used in line 67")
             sleep(1)
+            #Get web elements to send the data from spreadsheet
             address = WebDriverWait(self.driver, 20).until(EC.visibility_of_element_located((By.ID, "street-address")))
             city = WebDriverWait(self.driver, 20).until(EC.visibility_of_element_located((By.ID, "city")))
             zip = WebDriverWait(self.driver, 20).until(EC.visibility_of_element_located((By.ID, "zip-code")))
@@ -127,7 +130,7 @@ class homeVal(multiprocessing.Process):
             
         self.data = newData
 
-        
+    #Description Check if element exists in html, throws an exception if one cannot be found
     def check_exists_by_xpath(self, thisDriver ,xpath):
         print(xpath)
         try:
@@ -136,6 +139,7 @@ class homeVal(multiprocessing.Process):
             return False
         return True
 
+    #Description: sends emails to all recipients contained in excel file
     def email(self):
         port = 465
         password = input("Enter Password:")
@@ -144,8 +148,8 @@ class homeVal(multiprocessing.Process):
         
         with smtplib.SMTP_SSL("smtp.gmail.com", port, context=context) as server:
             #server.login("Put email to send out to recipients", password)
-            
-            for i in range(5):
+            #Message part of email
+            for i in range(len(self.data):
                 if(len(self.data[i]) != 9):
                     print("cant send")
                     continue
@@ -171,6 +175,7 @@ class homeVal(multiprocessing.Process):
 
     Warm regards,</p><br><br>"""
                 #message = MIMEText(message, 'plain', 'utf-8')
+                #ALL of the html elements of the email
                 message = MIMEText(message, 'html')
                 temp = MIMEText('<img src="cid:image1" width=500 height=auto>', 'html')
                 attachment = open("footer.png",'rb')
@@ -194,6 +199,8 @@ class homeVal(multiprocessing.Process):
             return True
         except:
             return False
+
+##TODO - implement multiprocessing/threading##
 """
 def startMultHome():
     shm = shared_memory.SharedMemory(create=True, size=(sys.getsizeof(myVal)))
@@ -226,6 +233,7 @@ def test2():
 def test3():
     threading.Thread(target=myVal.email()).start()
 
+#Description: window loop used for updating the GUI
 def runFunc(thisRun,currData):
         while(thisRun):
             window.update_idletasks()
@@ -249,6 +257,7 @@ if __name__ == '__main__':
             except:
                 print("No data to load from")
         
+        #Create a window 
         window = tk.Tk()
         window.title("Home Valuation Tool")
         window.geometry("800x400")
@@ -257,6 +266,7 @@ if __name__ == '__main__':
         #greeting.pack()
 
         isRunning = True
+        #Create Buttons for the window that run functions 
         getDataButt = tk.Button(text="New Data", width=25, height=5,command=test1)#lambda:myVal.getData('book1.xlsx'))
         getHomeVal = tk.Button(text="Get Home Values", width=25, height=5, command=test2)
         sendEmail = tk.Button(text="Send Emails", width=25, height=5,command=test3)
